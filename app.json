@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "27b5e1b7-b9ae-4af2-aa20-90ced1c78e6f"
+      }
+    },
+    "android": {
+      "package": "com.herrera99.Catequesis Pomalcabackend"
+    }
+  }
+}

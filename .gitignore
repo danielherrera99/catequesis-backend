@@ -1,0 +1,15 @@
+node_modules/
+.env
+*.log
+.DS_Store
+uploads/
+*.pdf
+*.jpg
+*.png
+.vscode/
+jufra-drive-b66f05f577a8.json
+*.txt
+*.webp
+*.png
+*.jpg
+*.jpeg
