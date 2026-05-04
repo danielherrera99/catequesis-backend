@@ -148,11 +148,11 @@ router.post('/registro', [
         res.status(201).json({
             success: true,
             message: 'Registro exitoso. Tu cuenta está pendiente de aprobación por el Consejo.',
-            Miembro: {
-                id: Miembro._id,
-                nombre: Miembro.nombre,
-                apellido: Miembro.apellido,
-                username: Miembro.username
+            usuario: {
+                id: miembroDoc._id,
+                nombre: miembroDoc.nombre,
+                apellido: miembroDoc.apellido,
+                username: miembroDoc.username
             }
         });
     } catch (error) {
@@ -218,13 +218,13 @@ router.post('/login', [
         }
 
         // Generar token
-        const token = generarToken(Miembro._id);
+        const token = generarToken(miembroLogueado._id);
 
         res.status(200).json({
             success: true,
             message: 'Inicio de sesión exitoso',
             token,
-            Miembro: {
+            usuario: {
                 id: miembroLogueado._id,
                 nombre: miembroLogueado.nombre,
                 apellido: miembroLogueado.apellido,
@@ -271,7 +271,7 @@ router.get('/perfil', require('../middleware/auth').proteger, async (req, res) =
 
         res.status(200).json({
             success: true,
-            Miembro
+            usuario: miembroPerfil
         });
     } catch (error) {
         console.error(error);
@@ -346,7 +346,7 @@ router.put('/perfil', require('../middleware/auth').proteger, async (req, res) =
         res.status(200).json({
             success: true,
             message: 'Perfil actualizado exitosamente',
-            Miembro: miembroEdit
+            usuario: miembroEdit
         });
     } catch (error) {
         console.error(error);
