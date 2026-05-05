@@ -77,6 +77,7 @@ app.use('/api/espiritualidad', require('./routes/espiritualidad'));
 app.use('/api/mensajes', require('./routes/mensajes'));
 app.use('/api/web-config', require('./routes/webConfig'));
 app.use('/api/parroquia-config', require('./routes/parroquiaConfig'));
+app.use('/api/tienda', require('./routes/tienda'));
 
 // Ruta de prueba
 app.get('/', (req, res) => {
