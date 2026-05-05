@@ -232,7 +232,7 @@ router.post('/login', [
                 email: miembroLogueado.email,
                 rol: miembroLogueado.rol,
                 cargo: miembroLogueado.cargo,
-                etapaFormacion: miembroLogueado.etapaFormacion,
+
                 foto: miembroLogueado.foto,
                 codigoQR: miembroLogueado.codigoQR
             }

@@ -66,11 +66,6 @@ const MiembroSchema = new mongoose.Schema({
         enum: ['coordinador', 'vice-coordinador', 'secretario', 'tesorero', 'formador', 'animador', 'ninguno'],
         default: 'ninguno'
     },
-    etapaFormacion: {
-        type: String,
-        enum: ['aspirante', 'iniciado', 'en_formacion', 'promesado'],
-        default: 'aspirante'
-    },
     foto: {
         type: String,
         default: null

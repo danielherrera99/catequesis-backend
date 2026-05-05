@@ -78,7 +78,7 @@ router.put('/:id', proteger, autorizarRoles('admin', 'consejo'), async (req, res
         const camposPermitidos = [
             'nombre', 'apellido', 'telefono', 'fechaNacimiento',
             'fechaIngreso', 'fechaPromesa', 'rol', 'cargo',
-            'etapaFormacion', 'foto', 'activo', 'username', 'password', 'email'
+            'foto', 'activo', 'username', 'password', 'email'
         ];
 
         let miembroUpdate = await Miembro.findById(req.params.id);
@@ -291,8 +291,6 @@ router.post('/comunicacion/masivo', proteger, autorizarRoles('admin', 'consejo')
             if (filtro && filtro !== 'todos') {
                 if (['admin', 'consejo', 'miembro'].includes(filtro)) {
                     query.rol = filtro;
-                } else if (['aspirante', 'iniciado', 'en_formacion', 'promesado'].includes(filtro)) {
-                    query.etapaFormacion = filtro;
                 }
             }
 

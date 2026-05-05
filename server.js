@@ -38,7 +38,7 @@ mongoose.connect(process.env.MONGODB_URI, {
                     password: '201599',
                     rol: 'admin',
                     cargo: 'coordinador',
-                    etapaFormacion: 'promesado',
+
                     email: 'admin@catequesis.com',
                     activo: true
                 });
