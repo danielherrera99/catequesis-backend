@@ -309,7 +309,7 @@ router.put('/perfil', require('../middleware/auth').proteger, async (req, res) =
                 // Si es password, solo actualizar si tiene contenido y longitud válida
                 if (campo === 'password') {
                     if (valor && valor.trim().length >= 6) {
-                        Miembro[campo] = valor;
+                        miembroEdit[campo] = valor;
                     }
                     return;
                 }
@@ -324,16 +324,16 @@ router.put('/perfil', require('../middleware/auth').proteger, async (req, res) =
                     if (valor === '' || valor === null) {
                         // Para evitar el error E11000 en el índice sparse unique de email
                         if (campo === 'email') {
-                            Miembro[campo] = undefined;
+                            miembroEdit[campo] = undefined;
                         } else {
-                            Miembro[campo] = null;
+                            miembroEdit[campo] = null;
                         }
                     } else {
-                        Miembro[campo] = valor;
+                        miembroEdit[campo] = valor;
                     }
                 } else {
                     // Otros campos (telefono, foto)
-                    Miembro[campo] = valor;
+                    miembroEdit[campo] = valor;
                 }
             }
         });
