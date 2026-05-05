@@ -149,10 +149,10 @@ router.post('/registro', [
             success: true,
             message: 'Registro exitoso. Tu cuenta está pendiente de aprobación por el Consejo.',
             usuario: {
-                id: miembroDoc._id,
-                nombre: miembroDoc.nombre,
-                apellido: miembroDoc.apellido,
-                username: miembroDoc.username
+                id: nuevoMiembro._id,
+                nombre: nuevoMiembro.nombre,
+                apellido: nuevoMiembro.apellido,
+                username: nuevoMiembro.username
             }
         });
     } catch (error) {
