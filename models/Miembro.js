@@ -53,9 +53,6 @@ const MiembroSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    fechaPromesa: {
-        type: Date
-    },
     rol: {
         type: String,
         enum: ['admin', 'consejo', 'miembro'],
