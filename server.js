@@ -88,6 +88,28 @@ app.get('/', (req, res) => {
     });
 });
 
+// Ruta de diagnóstico (Temporal)
+app.get('/api/debug', async (req, res) => {
+    try {
+        const dbStatus = mongoose.connection.readyState === 1 ? 'Conectado' : 'Desconectado';
+        const dbName = mongoose.connection.name;
+        const Miembro = require('./models/Miembro');
+        const count = await Miembro.countDocuments();
+        const adminExists = await Miembro.findOne({ username: 'Catequesis' });
+
+        res.json({
+            status: 'ok',
+            mongodb: dbStatus,
+            database: dbName,
+            miembrosTotales: count,
+            adminExiste: !!adminExists,
+            googleEnv: !!process.env.GOOGLE_CLIENT_ID
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Manejo de errores global
 app.use((err, req, res, next) => {
     console.error(err.stack);
