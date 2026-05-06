@@ -80,4 +80,35 @@ router.delete('/:id', proteger, async (req, res) => {
     }
 });
 
+// @route   PUT /api/tienda/:id
+// @desc    Actualizar una transacción
+// @access  Private
+router.put('/:id', proteger, async (req, res) => {
+    const { tipo, monto, descripcion, categoria, fecha } = req.body;
+
+    try {
+        let transaccion = await Transaccion.findById(req.params.id);
+        if (!transaccion) {
+            return res.status(404).json({ message: 'Transacción no encontrada' });
+        }
+
+        // Solo admin o consejo pueden editar
+        if (req.Miembro.rol !== 'admin' && req.Miembro.rol !== 'consejo') {
+            return res.status(403).json({ message: 'No autorizado' });
+        }
+
+        transaccion.tipo = tipo || transaccion.tipo;
+        transaccion.monto = monto || transaccion.monto;
+        transaccion.descripcion = descripcion || transaccion.descripcion;
+        transaccion.categoria = categoria || transaccion.categoria;
+        transaccion.fecha = fecha || transaccion.fecha;
+
+        await transaccion.save();
+        res.json({ success: true, transaccion });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error al actualizar transacción' });
+    }
+});
+
 module.exports = router;

@@ -13,8 +13,8 @@ const ActaSchema = new mongoose.Schema({
     },
     tipoReunion: {
         type: String,
-        enum: ['consejo', 'fraternidad', 'formacion', 'extraordinaria'],
-        default: 'consejo'
+        enum: ['directiva', 'fraternidad', 'formacion', 'extraordinaria'],
+        default: 'directiva'
     },
     contenido: {
         type: String,
