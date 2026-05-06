@@ -67,11 +67,13 @@ router.post('/lote', proteger, autorizarRoles('admin', 'consejo'), async (req, r
         
         const bulkOps = asistencias.map(asis => {
             const fechaNormalizada = new Date(fecha);
-            fechaNormalizada.setHours(12, 0, 0, 0); // Normalizar a mediodía para evitar desfases de zona horaria en la búsqueda
+            fechaNormalizada.setHours(12, 0, 0, 0);
 
-            const filter = asis.MiembroId 
+            const mId = asis.MiembroId || asis.usuarioId;
+
+            const filter = mId 
                 ? { 
-                    Miembro: asis.MiembroId, 
+                    Miembro: mId, 
                     fecha: { $gte: new Date(fechaNormalizada).setHours(0,0,0,0), $lte: new Date(fechaNormalizada).setHours(23,59,59,999) }, 
                     tipoReunion 
                 }
@@ -86,7 +88,7 @@ router.post('/lote', proteger, autorizarRoles('admin', 'consejo'), async (req, r
                     filter,
                     update: {
                         $set: {
-                            Miembro: asis.MiembroId,
+                            Miembro: mId,
                             nombreInvitado: asis.nombreInvitado,
                             fecha: fechaNormalizada,
                             tipoReunion,
