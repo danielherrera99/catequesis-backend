@@ -87,28 +87,6 @@ app.get('/', (req, res) => {
     });
 });
 
-// Ruta de diagnóstico (Temporal para verificar Token)
-app.get('/api/debug-token', async (req, res) => {
-    try {
-        const Miembro = require('./models/Miembro');
-        const user = await Miembro.findOne({ username: 'Jufrapomalca' });
-
-        if (!user) {
-            return res.json({ error: 'Usuario Jufrapomalca no encontrado' });
-        }
-
-        res.json({
-            usuario: user.username,
-            tieneToken: !!user.expoPushToken,
-            tokenPrefix: user.expoPushToken ? user.expoPushToken.substring(0, 20) + '...' : 'Nulo',
-            dbStatus: mongoose.connection.readyState === 1 ? 'Conectado' : 'Desconectado',
-            database: mongoose.connection.name
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
 // Manejo de errores global
 app.use((err, req, res, next) => {
     console.error(err.stack);
