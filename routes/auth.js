@@ -371,17 +371,17 @@ router.post('/recuperar-password', async (req, res) => {
         const crypto = require('crypto');
         const resetCode = crypto.randomInt(100000, 999999).toString();
 
-        // Hashear el código antes de guardarlo por seguridad (opcional, pero buena práctica)
+        // Hashear el código antes de guardarlo por seguridad
         const bcrypt = require('bcryptjs');
         const salt = await bcrypt.genSalt(10);
-        Miembro.resetPasswordCode = await bcrypt.hash(resetCode, salt);
-        Miembro.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutos
+        miembroRecuperar.resetPasswordCode = await bcrypt.hash(resetCode, salt);
+        miembroRecuperar.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutos
 
-        await Miembro.save({ validateBeforeSave: false });
+        await miembroRecuperar.save({ validateBeforeSave: false });
 
         const mensaje = `
             <h2>Recuperación de Contraseña - Catequesis Pomalca</h2>
-            <p>Hola ${Miembro.nombre},</p>
+            <p>Hola ${miembroRecuperar.nombre},</p>
             <p>Has solicitado restablecer tu contraseña. Utiliza el siguiente código de 6 dígitos en la aplicación:</p>
             <h1 style="background: #f4f4f4; padding: 10px; text-align: center; letter-spacing: 5px; color: #624b2b;">${resetCode}</h1>
             <p>Este código expira en 15 minutos.</p>
