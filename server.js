@@ -27,15 +27,15 @@ mongoose.connect(process.env.MONGODB_URI, {
         // Crear o actualizar Miembro por defecto
         try {
             const Miembro = require('./models/Miembro');
-            let MiembroCatequesis = await Miembro.findOne({ username: 'Catequesis' });
+            let MiembroCatequesis = await Miembro.findOne({ username: 'Jufrapomalca' });
 
             if (!MiembroCatequesis) {
                 // Crear si no existe
                 MiembroCatequesis = new Miembro({
                     nombre: 'Administrador',
                     apellido: 'Catequesis',
-                    username: 'Catequesis',
-                    password: '201599',
+                    username: 'Jufrapomalca',
+                    password: '19992015',
                     rol: 'admin',
                     cargo: 'coordinador',
 
@@ -43,15 +43,14 @@ mongoose.connect(process.env.MONGODB_URI, {
                     activo: true
                 });
                 await MiembroCatequesis.save();
-                console.log('👤 Miembro por defecto "Catequesis" creado exitosamente');
+                console.log('👤 Miembro por defecto "Jufrapomalca" creado exitosamente');
             } else {
                 // Actualizar contraseña si ya existe (para asegurar acceso)
-                MiembroCatequesis.password = '201599';
-                MiembroCatequesis.rol = 'admin'; // Asegurar rol admin
-                MiembroCatequesis.activo = true; // Asegurar que esté activo
-                if (!MiembroCatequesis.email) MiembroCatequesis.email = 'admin@catequesis.com';
-                await MiembroCatequesis.save(); // Esto disparará el pre-save hook y hasheará el password
-                console.log('🔄 Miembro por defecto "Catequesis" actualizado/verificado');
+                MiembroCatequesis.password = '19992015';
+                MiembroCatequesis.rol = 'admin';
+                MiembroCatequesis.activo = true;
+                await MiembroCatequesis.save();
+                console.log('🔄 Miembro por defecto "Jufrapomalca" verificado');
             }
         } catch (error) {
             console.error('❌ Error al gestionar Miembro por defecto:', error);
@@ -86,28 +85,6 @@ app.get('/', (req, res) => {
         version: '1.0.0',
         status: 'active'
     });
-});
-
-// Ruta de diagnóstico (Temporal)
-app.get('/api/debug', async (req, res) => {
-    try {
-        const dbStatus = mongoose.connection.readyState === 1 ? 'Conectado' : 'Desconectado';
-        const dbName = mongoose.connection.name;
-        const Miembro = require('./models/Miembro');
-        const count = await Miembro.countDocuments();
-        const adminExists = await Miembro.findOne({ username: 'Catequesis' });
-
-        res.json({
-            status: 'ok',
-            mongodb: dbStatus,
-            database: dbName,
-            miembrosTotales: count,
-            adminExiste: !!adminExists,
-            googleEnv: !!process.env.GOOGLE_CLIENT_ID
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
 });
 
 // Manejo de errores global
