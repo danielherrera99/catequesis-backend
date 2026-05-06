@@ -4,6 +4,8 @@ const { body, validationResult } = require('express-validator');
 const Miembro = require('../models/Miembro');
 const { generarToken } = require('../middleware/auth');
 const QRCode = require('qrcode');
+const multer = require('multer');
+const bcrypt = require('bcryptjs');
 // Configurar almacenamiento de fotos de perfil en memoria para subir a Drive
 const storage = multer.memoryStorage();
 
