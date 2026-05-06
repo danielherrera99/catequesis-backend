@@ -4,28 +4,8 @@ const { body, validationResult } = require('express-validator');
 const Miembro = require('../models/Miembro');
 const { generarToken } = require('../middleware/auth');
 const QRCode = require('qrcode');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-
-// Configurar Cloudinary con variables de entorno
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
-
-// Configurar almacenamiento de fotos de perfil en Cloudinary
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'Catequesis Pomalca_perfiles', // Carpeta en Cloudinary
-    allowed_formats: ['jpg', 'png', 'jpeg'],
-    public_id: (req, file) => `perfil-${req.Miembro._id}-${Date.now()}`,
-  },
-});
+// Configurar almacenamiento de fotos de perfil en memoria para subir a Drive
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
@@ -41,6 +21,8 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
+const { uploadImageToDrive } = require('../utils/drive');
+
 // @route   POST /api/auth/foto
 // @desc    Subir foto de perfil
 // @access  Private
@@ -53,20 +35,24 @@ router.post('/foto', require('../middleware/auth').proteger, upload.single('foto
             });
         }
 
-        // En Cloudinary, la URL segura viene en req.file.path
-        const archivoUrl = req.file.path;
-
         const miembroDoc = await Miembro.findById(req.Miembro._id);
         if (!miembroDoc) {
             return res.status(404).json({ success: false, message: 'Miembro no encontrado' });
         }
+
+        // Subir a Google Drive
+        const fileName = `Perfil_${miembroDoc.username}_${Date.now()}.jpg`;
+        const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+        
+        // URL para visualización directa desde Drive
+        const archivoUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
 
         miembroDoc.foto = archivoUrl;
         await miembroDoc.save();
 
         res.status(200).json({
             success: true,
-            message: 'Foto de perfil actualizada correctamente',
+            message: 'Foto de perfil actualizada correctamente y guardada en Drive',
             foto: archivoUrl
         });
     } catch (error) {

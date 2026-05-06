@@ -9,19 +9,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configurar almacenamiento de archivos
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const dir = 'uploads/eventos';
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-        cb(null, dir);
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
+// Configurar almacenamiento en memoria para subir a Drive
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
@@ -36,6 +25,8 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
     fileFilter: fileFilter
 });
+
+const { uploadImageToDrive } = require('../utils/drive');
 
 // @route   GET /api/eventos
 // @desc    Obtener todos los eventos futuros
@@ -74,7 +65,10 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo', 'coordinador'), up
         let imagenUrl = null;
 
         if (req.file) {
-            imagenUrl = `${req.protocol}://${req.get('host')}/uploads/eventos/${req.file.filename}`;
+            // Subir a Google Drive
+            const fileName = `Evento_${Date.now()}_${req.file.originalname}`;
+            const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+            imagenUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 
         const eventoData = {
@@ -164,7 +158,10 @@ router.put('/:id', proteger, autorizarRoles('admin', 'consejo', 'coordinador'), 
         const camposActualizar = { ...req.body };
 
         if (req.file) {
-            camposActualizar.imagenUrl = `${req.protocol}://${req.get('host')}/uploads/eventos/${req.file.filename}`;
+            // Subir a Google Drive
+            const fileName = `Evento_Edit_${Date.now()}_${req.file.originalname}`;
+            const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+            camposActualizar.imagenUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 
         if (req.body.lat && req.body.lng) {

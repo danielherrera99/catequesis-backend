@@ -2,12 +2,13 @@ const { google } = require('googleapis');
 const path = require('path');
 const stream = require('stream');
 
-const FOLDER_ID = '104IEJOkcsC-AbXatZgcDbzwx40pubk-_';
+// ID de la carpeta institucional "Actas y Fotos Catequesis"
+const FOLDER_ID = '1T80MXhIYiq5sezxamPTcvk1-BL2w1FmE';
 
 const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    'http://localhost:3000/oauth2callback' // redirect_uri no se necesita para API calls con refresh token, pero se pone para no romper la libreria
+    'http://localhost:3000/oauth2callback'
 );
 
 auth.setCredentials({
@@ -17,12 +18,9 @@ auth.setCredentials({
 const drive = google.drive({ version: 'v3', auth });
 
 /**
- * Sube un archivo PDF a Google Drive.
- * @param {Buffer} fileBuffer Buffer del archivo PDF
- * @param {String} fileName Nombre del archivo a crear en Drive
- * @returns {Promise<String>} Enlace de vista del archivo creado
+ * Sube un archivo (PDF o Imagen) a Google Drive.
  */
-const uploadPdfToDrive = async (fileBuffer, fileName) => {
+const uploadToDrive = async (fileBuffer, fileName, mimeType) => {
     try {
         const bufferStream = new stream.PassThrough();
         bufferStream.end(fileBuffer);
@@ -33,19 +31,19 @@ const uploadPdfToDrive = async (fileBuffer, fileName) => {
         };
 
         const media = {
-            mimeType: 'application/pdf',
+            mimeType: mimeType,
             body: bufferStream,
         };
 
         const response = await drive.files.create({
             resource: fileMetadata,
             media: media,
-            fields: 'id, webViewLink'
+            fields: 'id, webViewLink, webContentLink'
         });
 
         const fileId = response.data.id;
         
-        // Dar permiso de vista publica o lectura a quien tenga el link por si acaso
+        // Dar permiso de lectura a quien tenga el link
         await drive.permissions.create({
             fileId: fileId,
             requestBody: {
@@ -54,19 +52,29 @@ const uploadPdfToDrive = async (fileBuffer, fileName) => {
             }
         });
 
-        // Obtener el enlace actualizado
-        const result = await drive.files.get({
-            fileId: fileId,
-            fields: 'webViewLink'
-        });
-
-        return result.data.webViewLink;
+        // Retornar el link directo del contenido (webContentLink) o de vista (webViewLink)
+        // Para imágenes en la app, a veces es mejor el ID para construir una URL directa
+        return response.data.id; 
     } catch (error) {
         console.error('Error al subir a Google Drive:', error);
         throw error;
     }
 };
 
+const uploadPdfToDrive = async (fileBuffer, fileName) => {
+    const fileId = await uploadToDrive(fileBuffer, fileName, 'application/pdf');
+    // Para PDFs queremos el link de vista
+    const res = await drive.files.get({ fileId, fields: 'webViewLink' });
+    return res.data.webViewLink;
+};
+
+const uploadImageToDrive = async (fileBuffer, fileName, mimeType = 'image/jpeg') => {
+    const fileId = await uploadToDrive(fileBuffer, fileName, mimeType);
+    // Para imágenes retornamos el ID para construir la URL de visualización directa
+    return fileId;
+};
+
 module.exports = {
-    uploadPdfToDrive
+    uploadPdfToDrive,
+    uploadImageToDrive
 };

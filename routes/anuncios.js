@@ -9,19 +9,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configurar almacenamiento de archivos
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const dir = 'uploads/anuncios';
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-        cb(null, dir);
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
+// Configurar almacenamiento en memoria para procesar y subir a Drive
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
@@ -37,6 +26,8 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
+const { uploadImageToDrive } = require('../utils/drive');
+
 // @route   POST /api/anuncios
 // @desc    Crear nuevo anuncio
 // @access  Private (Admin/Consejo)
@@ -46,9 +37,12 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('im
 
         let imagen = null;
         if (req.file) {
-            imagen = `${req.protocol}://${req.get('host')}/uploads/anuncios/${req.file.filename}`;
+            // Subir a Google Drive
+            const fileName = `Anuncio_${Date.now()}_${req.file.originalname}`;
+            const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+            // URL para visualización directa desde Drive
+            imagen = `https://lh3.googleusercontent.com/d/${fileId}`;
         } else if (req.body.imagen) {
-            // Handle case where image URL is passed directly (though less common with file upload)
             imagen = req.body.imagen;
         }
 
@@ -97,7 +91,7 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('im
 
         res.status(201).json({
             success: true,
-            message: 'Anuncio creado exitosamente',
+            message: 'Anuncio creado exitosamente y guardado en Drive',
             anuncio
         });
     } catch (error) {
@@ -222,7 +216,10 @@ router.put('/:id', proteger, autorizarRoles('admin', 'consejo'), upload.single('
         const camposActualizar = { ...req.body };
 
         if (req.file) {
-            camposActualizar.imagen = `${req.protocol}://${req.get('host')}/uploads/anuncios/${req.file.filename}`;
+            // Subir a Google Drive
+            const fileName = `Anuncio_Edit_${Date.now()}_${req.file.originalname}`;
+            const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+            camposActualizar.imagen = `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 
         if (req.body.lat && req.body.lng) {

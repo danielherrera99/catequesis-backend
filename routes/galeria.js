@@ -6,19 +6,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configurar almacenamiento de archivos
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const dir = 'uploads/galeria';
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-        cb(null, dir);
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
+// Configurar almacenamiento en memoria para subir a Drive
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
@@ -30,9 +19,11 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit for videos
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
     fileFilter: fileFilter
 });
+
+const { uploadImageToDrive } = require('../utils/drive');
 
 // @route   GET /api/galeria
 // @desc    Obtener toda la galería
@@ -71,7 +62,11 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('ar
 
         const { titulo, descripcion, fecha, categoria } = req.body;
         const tipoArchivo = req.file.mimetype.startsWith('video/') ? 'video' : 'imagen';
-        const archivoUrl = `${req.protocol}://${req.get('host')}/uploads/galeria/${req.file.filename}`;
+        
+        // Subir a Google Drive
+        const fileName = `Galeria_${Date.now()}_${req.file.originalname}`;
+        const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+        const archivoUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
 
         const item = await Galeria.create({
             titulo,
