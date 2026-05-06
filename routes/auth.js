@@ -439,14 +439,17 @@ router.post('/recuperar-password', async (req, res) => {
             }
         }
 
-        // Fallback a Nodemailer (Funciona en local, pero Render bloquea el puerto 465)
+        // Configuración de Nodemailer con OAuth2 (Método más seguro)
         const nodemailer = require('nodemailer');
         
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL_USER || 'Catequesis Pomalca.app@gmail.com',
-                pass: process.env.EMAIL_PASS || 'tu-contrasena-de-aplicacion'
+                type: 'OAuth2',
+                user: process.env.EMAIL_USER,
+                clientId: process.env.GOOGLE_CLIENT_ID,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                refreshToken: process.env.GOOGLE_REFRESH_TOKEN
             }
         });
 
