@@ -75,18 +75,23 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('im
         // Notificar a todos los Miembros activos a través de Push Notifications
         try {
             const MiembrosActivos = await Miembro.find({ activo: true, expoPushToken: { $ne: null } });
+            console.log(`📢 Intentando notificar a ${MiembrosActivos.length} miembros activos con Token.`);
+            
             const tokens = MiembrosActivos.map(u => u.expoPushToken);
             if (tokens.length > 0) {
                 const badgeStr = prioridad === 'alta' ? '🚨' : '📢';
-                await enviarNotificacionGrupal(
+                const resPush = await enviarNotificacionGrupal(
                     tokens, 
                     `${badgeStr} Nuevo Anuncio: ${titulo}`, 
                     contenido.length > 60 ? contenido.substring(0, 60) + '...' : contenido,
                     { id: anuncio._id, tipo: 'anuncio' }
                 );
+                console.log('📬 Respuesta de Expo:', JSON.stringify(resPush));
+            } else {
+                console.log('⚠️ No se encontraron tokens válidos para enviar.');
             }
         } catch (pushErr) {
-            console.error('Error enviando notificaciones para anuncio:', pushErr);
+            console.error('❌ Error enviando notificaciones para anuncio:', pushErr);
         }
 
         res.status(201).json({
