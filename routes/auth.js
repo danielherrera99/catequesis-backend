@@ -276,6 +276,10 @@ router.get('/perfil', require('../middleware/auth').proteger, async (req, res) =
 // @access  Private
 router.put('/perfil', require('../middleware/auth').proteger, async (req, res) => {
     try {
+        console.log(`📡 Solicitud de actualización de perfil para: ${req.Miembro.username}`);
+        if (req.body.expoPushToken) {
+            console.log(`🔑 Recibido token: ${req.body.expoPushToken.substring(0, 15)}...`);
+        }
         const camposPermitidos = [
             'nombre', 'apellido', 'telefono', 'fechaNacimiento',
             'fechaIngreso', 'fechaPromesa', 'foto', 'password',
