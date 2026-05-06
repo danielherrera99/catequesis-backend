@@ -15,6 +15,12 @@ auth.setCredentials({
     refresh_token: process.env.GOOGLE_REFRESH_TOKEN
 });
 
+if (process.env.GOOGLE_REFRESH_TOKEN) {
+    console.log('✅ Google Drive Auth: Token detectado (comienza con:', process.env.GOOGLE_REFRESH_TOKEN.substring(0, 10) + '...)');
+} else {
+    console.warn('⚠️ Google Drive Auth: No se encontró GOOGLE_REFRESH_TOKEN en el entorno');
+}
+
 const drive = google.drive({ version: 'v3', auth });
 
 /**
