@@ -30,6 +30,8 @@ if (process.env.GOOGLE_REFRESH_TOKEN) {
     console.warn('⚠️ Google Drive Auth: No se encontró GOOGLE_REFRESH_TOKEN en el entorno');
 }
 
+console.log('📂 Configuración de carpetas Drive:', JSON.stringify(FOLDERS, null, 2));
+
 const drive = google.drive({ version: 'v3', auth });
 
 /**
