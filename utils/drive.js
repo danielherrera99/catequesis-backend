@@ -30,8 +30,6 @@ if (process.env.GOOGLE_REFRESH_TOKEN) {
     console.warn('⚠️ Google Drive Auth: No se encontró GOOGLE_REFRESH_TOKEN en el entorno');
 }
 
-console.log('📂 Configuración de carpetas Drive:', JSON.stringify(FOLDERS, null, 2));
-
 const drive = google.drive({ version: 'v3', auth });
 
 /**
@@ -46,8 +44,6 @@ const uploadToDrive = async (fileBuffer, fileName, mimeType, folderId = ROOT_FOL
             name: fileName,
             parents: [folderId],
         };
-
-        console.log(`📤 Subiendo archivo: ${fileName} a la carpeta: ${folderId}`);
 
         const media = {
             mimeType: mimeType,
