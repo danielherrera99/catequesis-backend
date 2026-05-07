@@ -44,7 +44,7 @@ exports.proteger = async (req, res, next) => {
 // Autorizar roles específicos
 exports.autorizarRoles = (...roles) => {
     return (req, res, next) => {
-        const cargosConsejo = ['coordinador', 'vice-coordinador', 'secretario', 'tesorero', 'formador', 'animador'];
+        const cargosConsejo = ['coordinador', 'subcoordinadora', 'secretario', 'tesorera', 'pro tesorera', 'delegado'];
 
         // Si el Miembro tiene rol permitido
         if (roles.includes(req.Miembro.rol)) {

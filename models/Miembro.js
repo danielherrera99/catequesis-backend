@@ -60,7 +60,7 @@ const MiembroSchema = new mongoose.Schema({
     },
     cargo: {
         type: String,
-        enum: ['coordinador', 'vice-coordinador', 'secretario', 'tesorero', 'formador', 'animador', 'ninguno'],
+        enum: ['coordinador', 'subcoordinadora', 'secretario', 'tesorera', 'pro tesorera', 'delegado', 'ninguno'],
         default: 'ninguno'
     },
     foto: {
