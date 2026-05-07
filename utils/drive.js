@@ -2,8 +2,17 @@ const { google } = require('googleapis');
 const path = require('path');
 const stream = require('stream');
 
-// ID de la carpeta institucional "Actas y Fotos Catequesis"
-const FOLDER_ID = '1T80MXhIYiq5sezxamPTcvk1-BL2w1FmE';
+// IDs de carpetas organizadas
+const ROOT_FOLDER_ID = '1T80MXhIYiq5sezxamPTcvk1-BL2w1FmE';
+const FOLDERS = {
+    ACTAS: '1iUMZtEBFSNoq4cQdaozyA96K8gZ7rV-W',
+    PERFIL: '10MSMlspfPT-E_j4xNpd6TJ9COrA5baU3',
+    GALERIA: '1Cz4-lhqIj1Q47SHl4eaWnuBiBMLK3cR8',
+    ANUNCIOS: '1TgMK9axJJU7Svhqmgz9YYk2Yk377wUeC',
+    EVENTOS: '1OqKPVOg8JyKMCx4xrLEaNkYp6AnzCxuh',
+    SERVICIOS: '1pBTjBnvhExVSBvVvvgESB9kAlBw39r3R',
+    FORMACION: '1ZFpX4ej9uOKpXZXP7FVwrPGQE5wY-_hT'
+};
 
 const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -26,15 +35,17 @@ const drive = google.drive({ version: 'v3', auth });
 /**
  * Sube un archivo (PDF o Imagen) a Google Drive.
  */
-const uploadToDrive = async (fileBuffer, fileName, mimeType) => {
+const uploadToDrive = async (fileBuffer, fileName, mimeType, folderId = ROOT_FOLDER_ID) => {
     try {
         const bufferStream = new stream.PassThrough();
         bufferStream.end(fileBuffer);
 
         const fileMetadata = {
             name: fileName,
-            parents: [FOLDER_ID],
+            parents: [folderId],
         };
+
+        console.log(`📤 Subiendo archivo: ${fileName} a la carpeta: ${folderId}`);
 
         const media = {
             mimeType: mimeType,
@@ -68,19 +79,28 @@ const uploadToDrive = async (fileBuffer, fileName, mimeType) => {
 };
 
 const uploadPdfToDrive = async (fileBuffer, fileName) => {
-    const fileId = await uploadToDrive(fileBuffer, fileName, 'application/pdf');
+    const fileId = await uploadToDrive(fileBuffer, fileName, 'application/pdf', FOLDERS.ACTAS);
     // Para PDFs queremos el link de vista
     const res = await drive.files.get({ fileId, fields: 'webViewLink' });
     return res.data.webViewLink;
 };
 
-const uploadImageToDrive = async (fileBuffer, fileName, mimeType = 'image/jpeg') => {
-    const fileId = await uploadToDrive(fileBuffer, fileName, mimeType);
+const uploadImageToDrive = async (fileBuffer, fileName, folderType = 'GALERIA', mimeType = 'image/jpeg') => {
+    const folderId = FOLDERS[folderType.toUpperCase()] || FOLDERS.GALERIA;
+    const fileId = await uploadToDrive(fileBuffer, fileName, mimeType, folderId);
     // Para imágenes retornamos el ID para construir la URL de visualización directa
+    return fileId;
+};
+
+const uploadFileToDrive = async (fileBuffer, fileName, folderType = 'FORMACION', mimeType = 'application/octet-stream') => {
+    const folderId = FOLDERS[folderType.toUpperCase()] || FOLDERS.FORMACION;
+    const fileId = await uploadToDrive(fileBuffer, fileName, mimeType, folderId);
     return fileId;
 };
 
 module.exports = {
     uploadPdfToDrive,
-    uploadImageToDrive
+    uploadImageToDrive,
+    uploadFileToDrive,
+    FOLDERS
 };

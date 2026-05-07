@@ -39,7 +39,7 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('im
         if (req.file) {
             // Subir a Google Drive
             const fileName = `Anuncio_${Date.now()}_${req.file.originalname}`;
-            const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+            const fileId = await uploadImageToDrive(req.file.buffer, fileName, 'ANUNCIOS', req.file.mimetype);
             // URL para visualización directa desde Drive
             imagen = `https://lh3.googleusercontent.com/d/${fileId}`;
         } else if (req.body.imagen) {
@@ -223,7 +223,7 @@ router.put('/:id', proteger, autorizarRoles('admin', 'consejo'), upload.single('
         if (req.file) {
             // Subir a Google Drive
             const fileName = `Anuncio_Edit_${Date.now()}_${req.file.originalname}`;
-            const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+            const fileId = await uploadImageToDrive(req.file.buffer, fileName, 'ANUNCIOS', req.file.mimetype);
             camposActualizar.imagen = `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 

@@ -65,7 +65,7 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('ar
         
         // Subir a Google Drive
         const fileName = `Galeria_${Date.now()}_${req.file.originalname}`;
-        const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+        const fileId = await uploadImageToDrive(req.file.buffer, fileName, 'GALERIA', req.file.mimetype);
         const archivoUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
 
         const item = await Galeria.create({

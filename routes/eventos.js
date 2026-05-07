@@ -67,7 +67,7 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo', 'coordinador'), up
         if (req.file) {
             // Subir a Google Drive
             const fileName = `Evento_${Date.now()}_${req.file.originalname}`;
-            const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+            const fileId = await uploadImageToDrive(req.file.buffer, fileName, 'EVENTOS', req.file.mimetype);
             imagenUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 
@@ -160,7 +160,7 @@ router.put('/:id', proteger, autorizarRoles('admin', 'consejo', 'coordinador'), 
         if (req.file) {
             // Subir a Google Drive
             const fileName = `Evento_Edit_${Date.now()}_${req.file.originalname}`;
-            const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+            const fileId = await uploadImageToDrive(req.file.buffer, fileName, 'EVENTOS', req.file.mimetype);
             camposActualizar.imagenUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 

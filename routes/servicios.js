@@ -6,19 +6,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configurar multer para subida de imágenes
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const dir = 'uploads/servicios';
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-        cb(null, dir);
-    },
-    filename: function (req, file, cb) {
-        cb(null, 'servicio-' + Date.now() + path.extname(file.originalname));
-    }
-});
+// Configurar almacenamiento en memoria para subir a Drive
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image')) {
@@ -33,6 +22,8 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
     fileFilter: fileFilter
 });
+
+const { uploadImageToDrive } = require('../utils/drive');
 
 // @route   GET /api/servicios
 // @desc    Obtener todas las oportunidades de servicio
@@ -66,7 +57,9 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('im
 
         let imagen = null;
         if (req.file) {
-            imagen = `${req.protocol}://${req.get('host')}/uploads/servicios/${req.file.filename}`;
+            const fileName = `Servicio_${Date.now()}_${req.file.originalname}`;
+            const fileId = await uploadImageToDrive(req.file.buffer, fileName, 'SERVICIOS', req.file.mimetype);
+            imagen = `https://lh3.googleusercontent.com/d/${fileId}`;
         }
 
         const servicioData = {

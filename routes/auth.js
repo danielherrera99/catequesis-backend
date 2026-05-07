@@ -44,7 +44,7 @@ router.post('/foto', require('../middleware/auth').proteger, upload.single('foto
 
         // Subir a Google Drive
         const fileName = `Perfil_${miembroDoc.username}_${Date.now()}.jpg`;
-        const fileId = await uploadImageToDrive(req.file.buffer, fileName, req.file.mimetype);
+        const fileId = await uploadImageToDrive(req.file.buffer, fileName, 'PERFIL', req.file.mimetype);
         
         // URL para visualización directa desde Drive
         const archivoUrl = `https://lh3.googleusercontent.com/d/${fileId}`;

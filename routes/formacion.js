@@ -7,19 +7,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configurar almacenamiento de archivos
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const dir = 'uploads/formacion';
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-        cb(null, dir);
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
+// Configurar almacenamiento en memoria para subir a Drive
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     // Aceptar documentos y audios
@@ -35,6 +24,8 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
     fileFilter: fileFilter
 });
+
+const { uploadFileToDrive } = require('../utils/drive');
 
 // @route   GET /api/formacion
 // @desc    Obtener todos los temas de formación
@@ -70,7 +61,9 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('ar
         let archivoNombre = null;
 
         if (req.file) {
-            archivoUrl = `${req.protocol}://${req.get('host')}/uploads/formacion/${req.file.filename}`;
+            const fileName = `Formacion_${Date.now()}_${req.file.originalname}`;
+            const fileId = await uploadFileToDrive(req.file.buffer, fileName, 'FORMACION', req.file.mimetype);
+            archivoUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
             archivoNombre = req.file.originalname;
         }
 
@@ -122,7 +115,9 @@ router.put('/:id', proteger, autorizarRoles('admin', 'consejo'), upload.single('
         const datosActualizar = { ...req.body };
 
         if (req.file) {
-            datosActualizar.archivoUrl = `${req.protocol}://${req.get('host')}/uploads/formacion/${req.file.filename}`;
+            const fileName = `Formacion_Edit_${Date.now()}_${req.file.originalname}`;
+            const fileId = await uploadFileToDrive(req.file.buffer, fileName, 'FORMACION', req.file.mimetype);
+            datosActualizar.archivoUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
             datosActualizar.archivoNombre = req.file.originalname;
         }
 
