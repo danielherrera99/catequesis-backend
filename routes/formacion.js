@@ -52,7 +52,7 @@ router.get('/', proteger, async (req, res) => {
 
 // @route   POST /api/formacion
 // @desc    Crear nuevo tema de formación
-// @access  Private (Admin/Consejo/Formador)
+// @access  Private (Admin/Consejo)
 router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('archivo'), async (req, res) => {
     try {
         const { titulo, descripcion, contenido, etiquetas } = req.body;
@@ -109,7 +109,7 @@ router.get('/:id', proteger, async (req, res) => {
 
 // @route   PUT /api/formacion/:id
 // @desc    Actualizar tema de formación
-// @access  Private (Admin/Consejo/Formador)
+// @access  Private (Admin/Consejo)
 router.put('/:id', proteger, autorizarRoles('admin', 'consejo'), upload.single('archivo'), async (req, res) => {
     try {
         const datosActualizar = { ...req.body };
@@ -146,7 +146,7 @@ router.put('/:id', proteger, autorizarRoles('admin', 'consejo'), upload.single('
 
 // @route   DELETE /api/formacion/:id
 // @desc    Eliminar tema de formación
-// @access  Private (Admin/Consejo/Formador)
+// @access  Private (Admin/Consejo)
 router.delete('/:id', proteger, autorizarRoles('admin', 'consejo'), async (req, res) => {
     try {
         const tema = await Formacion.findByIdAndDelete(req.params.id);

@@ -129,7 +129,7 @@ router.get('/:id', proteger, async (req, res) => {
 
 // @route   PUT /api/documentos/:id
 // @desc    Actualizar documento
-// @access  Private (Admin/Consejo/Formador)
+// @access  Private (Admin/Consejo)
 router.put('/:id', proteger, autorizarRoles('admin', 'consejo'), upload.single('archivo'), async (req, res) => {
     try {
         const datosActualizar = { ...req.body };
@@ -164,7 +164,7 @@ router.put('/:id', proteger, autorizarRoles('admin', 'consejo'), upload.single('
 
 // @route   DELETE /api/documentos/:id
 // @desc    Eliminar documento
-// @access  Private (Admin/Consejo/Formador)
+// @access  Private (Admin/Consejo)
 router.delete('/:id', proteger, autorizarRoles('admin', 'consejo'), async (req, res) => {
     try {
         const documento = await Documento.findByIdAndDelete(req.params.id);

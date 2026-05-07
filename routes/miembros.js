@@ -13,7 +13,7 @@ router.get('/', proteger, async (req, res) => {
         // Si es admin o consejo, permitir ver inactivos/pendientes
         const esAdmin = req.Miembro.rol === 'admin' ||
             req.Miembro.rol === 'consejo' ||
-            ['coordinador', 'vice-coordinador', 'secretario', 'tesorero', 'formador', 'animador'].includes(req.Miembro.cargo);
+            ['coordinador', 'subcoordinadora', 'secretario', 'tesorera', 'pro tesorera', 'delegado'].includes(req.Miembro.cargo);
 
         if (esAdmin) {
             if (req.query.todos === 'true') {

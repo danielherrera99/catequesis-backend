@@ -59,8 +59,8 @@ router.get('/', proteger, async (req, res) => {
 
 // @route   POST /api/cantos
 // @desc    Crear nuevo canto
-// @access  Private (Admin/Consejo/Formador/Animador)
-router.post('/', proteger, autorizarRoles('admin', 'consejo', 'animador', 'coordinador'), upload.single('archivo'), async (req, res) => {
+// @access  Private (Admin/Consejo)
+router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('archivo'), async (req, res) => {
     try {
         const { titulo, letra, categoria, autor } = req.body;
 
@@ -122,8 +122,8 @@ router.get('/:id', proteger, async (req, res) => {
 
 // @route   PUT /api/cantos/:id
 // @desc    Actualizar canto
-// @access  Private (Admin/Consejo/Formador/Animador)
-router.put('/:id', proteger, autorizarRoles('admin', 'consejo', 'animador', 'coordinador'), upload.single('archivo'), async (req, res) => {
+// @access  Private (Admin/Consejo)
+router.put('/:id', proteger, autorizarRoles('admin', 'consejo'), upload.single('archivo'), async (req, res) => {
     try {
         const datosActualizar = { ...req.body };
 
@@ -157,8 +157,8 @@ router.put('/:id', proteger, autorizarRoles('admin', 'consejo', 'animador', 'coo
 
 // @route   DELETE /api/cantos/:id
 // @desc    Eliminar canto
-// @access  Private (Admin/Consejo/Formador/Animador)
-router.delete('/:id', proteger, autorizarRoles('admin', 'consejo', 'animador', 'coordinador'), async (req, res) => {
+// @access  Private (Admin/Consejo)
+router.delete('/:id', proteger, autorizarRoles('admin', 'consejo'), async (req, res) => {
     try {
         const canto = await Canto.findByIdAndDelete(req.params.id);
 

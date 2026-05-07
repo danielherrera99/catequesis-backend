@@ -43,7 +43,7 @@ const crearDatosPrueba = async () => {
                 fechaPromesa: new Date('2020-10-04'),
                 rol: 'admin',
                 cargo: 'coordinador',
-                etapaFormacion: 'promesado'
+                activo: true
             },
             {
                 nombre: 'Clara',
@@ -57,7 +57,7 @@ const crearDatosPrueba = async () => {
                 fechaPromesa: new Date('2020-10-04'),
                 rol: 'consejo',
                 cargo: 'secretario',
-                etapaFormacion: 'promesado'
+                activo: true
             },
             {
                 nombre: 'Antonio',
@@ -69,8 +69,8 @@ const crearDatosPrueba = async () => {
                 fechaNacimiento: new Date('1998-06-13'),
                 fechaIngreso: new Date('2020-01-10'),
                 rol: 'consejo',
-                cargo: 'tesorero',
-                etapaFormacion: 'en_formacion'
+                cargo: 'tesorera',
+                activo: true
             },
             {
                 nombre: 'María',
@@ -83,7 +83,7 @@ const crearDatosPrueba = async () => {
                 fechaIngreso: new Date('2022-09-01'),
                 rol: 'miembro',
                 cargo: 'ninguno',
-                etapaFormacion: 'iniciado'
+                activo: true
             },
             {
                 nombre: 'Juan',
@@ -95,8 +95,8 @@ const crearDatosPrueba = async () => {
                 fechaNacimiento: new Date('1999-11-30'),
                 fechaIngreso: new Date('2021-02-14'),
                 rol: 'consejo',
-                cargo: 'formador',
-                etapaFormacion: 'promesado'
+                cargo: 'delegado',
+                activo: true
             }
         ];
 
