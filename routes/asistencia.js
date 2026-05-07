@@ -20,10 +20,16 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), async (req, res) 
             });
         }
 
+        // Normalizar fecha a Lima (UTC-5) y fijar a las 12:00 PM
+        const ahora = new Date();
+        const fechaPeru = new Date(ahora.getTime() - (5 * 60 * 60 * 1000));
+        const fechaFinal = fecha ? new Date(fecha) : fechaPeru;
+        fechaFinal.setHours(12, 0, 0, 0);
+
         // Crear registro de asistencia
         const asistencia = await Asistencia.create({
             Miembro: MiembroId,
-            fecha: fecha || new Date(),
+            fecha: fechaFinal,
             tipoReunion,
             estado: estado || 'presente',
             presente: estado === 'presente',
@@ -140,10 +146,15 @@ router.post('/qr', proteger, async (req, res) => {
             });
         }
 
+        // Normalizar fecha a Lima (UTC-5) y fijar a las 12:00 PM
+        const ahora = new Date();
+        const fechaPeru = new Date(ahora.getTime() - (5 * 60 * 60 * 1000));
+        fechaPeru.setHours(12, 0, 0, 0);
+
         // Crear registro de asistencia
         const asistencia = await Asistencia.create({
             Miembro: MiembroId,
-            fecha: new Date(),
+            fecha: fechaPeru,
             tipoReunion: tipoReunion || 'semanal',
             presente: true,
             metodoRegistro: 'qr',
