@@ -86,12 +86,6 @@ const MiembroSchema = new mongoose.Schema({
         type: Date,
         select: false
     },
-    requisitos: {
-        feBautismo: { type: Boolean, default: false },
-        dni: { type: Boolean, default: false },
-        constanciaComunion: { type: Boolean, default: false },
-        fichaInscripcion: { type: Boolean, default: false }
-    }
 }, {
     timestamps: true
 });
