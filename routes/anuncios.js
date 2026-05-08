@@ -88,7 +88,7 @@ router.post('/', proteger, autorizarRoles('admin', 'consejo'), upload.single('im
                 );
                 console.log('📬 Respuesta de Expo:', JSON.stringify(resPush));
             } else {
-                console.log('⚠️ No se encontraron tokens válidos para enviar.');
+                console.log('⚠️ No se encontraron tokens válidos para enviar en anuncios.js. Miembros sin token o inactivos.');
             }
         } catch (pushErr) {
             console.error('❌ Error enviando notificaciones para anuncio:', pushErr);

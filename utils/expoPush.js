@@ -10,7 +10,11 @@ const enviarNotificacionGrupal = async (tokens, titulo, mensaje, data = {}) => {
     // Remove duplicates or nulls
     const pushTokens = [...new Set(tokens.filter(t => t && t.startsWith('ExponentPushToken')))];
     
-    if (pushTokens.length === 0) return;
+    if (pushTokens.length === 0) {
+        console.log('⚠️ No tokens valid found in expoPush.js');
+        return;
+    }
+    console.log(`📡 Sending push to ${pushTokens.length} tokens:`, pushTokens);
 
     const messages = pushTokens.map(pushToken => ({
         to: pushToken,
